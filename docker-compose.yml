@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  python-api:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile.python
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - milvus-standalone
+      - postgres
+
+  cpp-reranker:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile.cpp
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./cpp/model:/app/cpp/model
+
+  milvus-standalone:
+    image: milvusdb/milvus:v2.4-latest
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    volumes:
+      - milvus_data:/var/lib/milvus
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "123456abc"
+      POSTGRES_DB: funnelrag
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+volumes:
+  milvus_data:
+  pg_data:

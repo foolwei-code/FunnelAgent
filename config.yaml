@@ -1,0 +1,35 @@
+app_name: FunnelRAG
+debug: false
+log_level: INFO
+
+llm:
+  provider: openai
+  model_name: qwen-plus
+  api_base: https://ws-cvbkn0izrwzsi71j.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
+  api_key: ""
+  temperature: 0.1
+  max_tokens: 2048
+
+milvus:
+  host: localhost
+  port: 19530
+  collection: funnelrag_docs
+  top_k: 100
+
+reranker:
+  host: localhost
+  port: 50051
+  model_path: cpp/model/cross_encoder.onnx
+  timeout: 0.05
+
+postgres:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: "123456abc"
+  database: funnelrag
+
+redis:
+  host: localhost
+  port: 6379
+  password: "123456abc"
